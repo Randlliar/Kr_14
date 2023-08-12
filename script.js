@@ -118,3 +118,5 @@ window.onload = function () {
   haveAccount.onclick = logInPage;
 
 }
+
+console.log("hello");
