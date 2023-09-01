@@ -1,122 +1,114 @@
-window.onload = function () {
+let userName = $('#userName');
+let password = $('#password');
+let fullName = $('#fullName');
+let email = $('#email');
+let repeatPassword = $('#repeat-password');
+let checkbox = $('#checkbox');
+let popup = $('.popup');
+let signUpBtn = $('#sign-up-btn');
+let submitBtn = $('#button-submit');
+let account =  $('#acc').attr('disabled', true);
+let inputBlock = $('.input-block')
+// userName.on( "keydown", function() {
+//   console.log(userName.val());
+// } );
 
-  let password = document.getElementById('password');
-  let fullName = document.getElementById('fullName');
-  let email = document.getElementById('email');
-  let repeatPassword = document.getElementById('repeat-password');
-  let popup = document.getElementsByClassName('popup')[0];
-  let haveAccount = document.getElementById('acc');
-  let buttonSubmit = document.getElementById('button-submit');
-
-  console.log(password.value)
+userName.val('asd');
+fullName.val('asd');
+password.val('asdaSD123');
+repeatPassword.val('asdaSD123');
+email.val('sharkevich.i@inbox.ru');
 
 
-  fullName.onkeydown = (ev) => {
-    // console.log(ev.key)
-    let number = parseInt(ev.key);
-
-    if (!isNaN(number)) {
-      return false;
-    }
+function checkInput(input, reg) {
+  if (!input.val().match(reg)) {
+    input.css("border-color", "#ff0000");
+    input.placeholder = 'Введите ' + input;
+    return true;
+  } else {
+    input.css("border-color", "#636363");
+    return false;
   }
-
-  let userName = document.getElementById('userName');
-
-  userName.onkeydown = (ev) => {
-    if ((ev.key === "." || ev.key === ",")) {
-      return false;
-    }
-  }
-
-  let checkbox = document.getElementById('checkbox');
-
-  checkbox.onchange = () => {
-    if (checkbox.checked) {
-      console.log("Согласен");
-    } else {
-      console.log("Не согласен");
-    }
-  }
-
-
-  let signUpBtn = document.getElementById('sign-up-btn');
-
-  signUpBtn.onclick = function () {
-
-    if (!fullName.value) {
-      alert("Заполните поле Full Name");
-      return;
-    }
-
-    if (!userName.value) {
-      alert("Заполните поле Your username");
-      return;
-    }
-
-    if (!email.value) {
-      alert("Заполните поле E-mail");
-      return;
-    }
-
-    if (!password.value) {
-      alert("Заполните поле Password");
-      return;
-    }
-
-    if (!repeatPassword.value) {
-      alert("Заполните поле Repeat Password");
-      return;
-    }
-
-    if (password.value.length < 8) {
-      alert(" Пароль должен содержать не менее 8 символов");
-      return;
-    }
-
-    if (password.value !== repeatPassword.value) {
-      alert("Пароли не совпадают");
-      return;
-    }
-
-    if (!checkbox.checked) {
-      alert("Вы должны согласиться с правилами");
-      return;
-    }
-
-    popup.style.display = 'flex';
 }
 
-  function logInPage() {
-    console.log(document.getElementsByClassName('input-block')[4]);
+let regName = /^[A-Za-z]+\s*$/;
+let regUserName = /^[A-Za-z0-9_]+\s*$/;
+let regEmail = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/;
+let regPassword = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})/
 
-    document.getElementById('title').innerText = "Log in to the system";
-    document.getElementsByClassName('input-block')[4].remove();
-    document.getElementsByClassName('input-block')[2].remove();
-    document.getElementsByClassName('input-block')[0].remove();
-    document.getElementById('sign-up-btn').innerText = "Log In";
+let hasError = false;
 
-    document.getElementsByClassName('checkbox')[0].remove();
-    document.getElementsByClassName('account')[0].remove();
-    popup.style.display = 'none';
-    userName.value = "";
-    password.value = "";
+signUpBtn.on('click', function () {
 
-    signUpBtn.onclick = function () {
-      if (!password.value) {
-        alert("Неверно введен пароль");
-        return;
-      }
-      if (!userName.value) {
-        alert("Неверно введено имя пользователя");
-        return;
-      }
-      alert(`Добро пожаловать, ${userName.value}!`)
-    }
+  if (checkInput(fullName, regName)) {
+    hasError = true;
+    return;
   }
 
-  buttonSubmit.onclick = logInPage;
-  haveAccount.onclick = logInPage;
+  if (checkInput(userName, regUserName)) {
+    hasError = true;
+    return;
+  }
 
-}
+  if (checkInput(email, regEmail)) {
+    hasError = true;
+    return;
+  }
 
-console.log("hello");
+  if (checkInput(password, regPassword)) {
+    hasError = true;
+    return;
+  }
+
+  if (repeatPassword.val() !== password.val() || !repeatPassword.val()) {
+    hasError = true;
+    repeatPassword.css("border-color", "#ff0000");
+    repeatPassword.placeholder = 'Введите ' + repeatPassword;
+  } else {
+    repeatPassword.css("border-color", "#636363");
+  }
+
+  if (!checkbox.is(':checked')) {
+    alert('Дайте свое согласие на обработку данных!');
+    return;
+  }
+
+  popup.css('display', 'flex');
+})
+
+const clients = [];
+
+submitBtn.on('click', function () {
+  popup.css('display', 'none');
+
+  const client = {};
+
+  client.fullName = fullName.val();
+  client.userName = userName.val();
+  client.email = email.val();
+  client.password = password.val();
+
+  clients.push(client);
+  localStorage.setItem('clients', JSON.stringify(clients));
+  JSON.parse(localStorage.getItem('clients'));
+
+
+  inputBlock[0].remove();
+  inputBlock[1].remove();
+  inputBlock[2].remove();
+  $('.checkbox').remove();
+  $('.input-value').val('');
+  $('#title').val('Log in to the system');
+  account.text('Registration');
+  signUpBtn.text('Sign In');
+  account.attr('disabled', false);
+
+})
+
+account.on('click', function () {
+  location.reload();
+  inputBlock[0].remove();
+  inputBlock[1].remove();
+  inputBlock[2].remove();
+  $('.checkbox').remove();
+})
