@@ -7,11 +7,9 @@ let checkbox = $('#checkbox');
 let popup = $('.popup');
 let signUpBtn = $('#sign-up-btn');
 let submitBtn = $('#button-submit');
-let account =  $('#acc').attr('disabled', true);
+let account =  $('#acc');
 let inputBlock = $('.input-block')
-// userName.on( "keydown", function() {
-//   console.log(userName.val());
-// } );
+let title = $('#title')
 
 userName.val('asd');
 fullName.val('asd');
@@ -23,7 +21,7 @@ email.val('sharkevich.i@inbox.ru');
 function checkInput(input, reg) {
   if (!input.val().match(reg)) {
     input.css("border-color", "#ff0000");
-    input.placeholder = 'Введите ' + input;
+    input.attr( 'placeholder', 'Введите ' + input.prev().html());
     return true;
   } else {
     input.css("border-color", "#636363");
@@ -35,6 +33,8 @@ let regName = /^[A-Za-z]+\s*$/;
 let regUserName = /^[A-Za-z0-9_]+\s*$/;
 let regEmail = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/;
 let regPassword = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,})/
+
+console.log(fullName)
 
 let hasError = false;
 
@@ -64,8 +64,7 @@ signUpBtn.on('click', function () {
     hasError = true;
     repeatPassword.css("border-color", "#ff0000");
     repeatPassword.placeholder = 'Введите ' + repeatPassword;
-  } else {
-    repeatPassword.css("border-color", "#636363");
+    return;
   }
 
   if (!checkbox.is(':checked')) {
@@ -78,37 +77,126 @@ signUpBtn.on('click', function () {
 
 const clients = [];
 
+
+function logInPage() {
+
+  // submitBtn.on('click', function () {
+    popup.css('display', 'none');
+
+    class Client {
+      constructor(fullName, userName, email, password) {
+        this.fullName = fullName;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+      }
+    }
+
+    // let client = new Client(
+    //   fullName.val(),
+    //   userName.val(),
+    //   email.val(),
+    //   password.val(),
+    // );
+
+    //
+    // client.fullName = fullName.val();
+    // client.userName = userName.val();
+    // client.email = email.val();
+    // client.password = password.val();
+
+    // console.log(client)
+
+    clients.push(new Client(
+      fullName.val(),
+      userName.val(),
+      email.val(),
+      password.val(),
+    ));
+    localStorage.setItem('clients', JSON.stringify(clients));
+    let clientsArray = JSON.parse(localStorage.getItem('clients'));
+    console.log(clientsArray)
+    console.log(clientsArray[0].fullName)
+
+
+    inputBlock[0].remove();
+    inputBlock[2].remove();
+    inputBlock[4].remove();
+    $('.checkbox').remove();
+    console.log(localStorage)
+    // $('.input-value').val('');
+    title.val('Log in to the system');
+    account.text('Registration');
+    signUpBtn.text('Sign In');
+    account.attr('disabled', false);
+
+    signUpBtn.on('click', function () {
+      for (let i = 0; i < localStorage.length; i++) {
+        if (userName.val() !== clientsArray[i].fullName) {
+          userName.attr('placeholder', 'Такой пользователь не зарегистрирован');
+          return;
+        }
+        if (password.val() !== clientsArray[i].password) {
+          userName.attr('placeholder', 'Неверый пароль');
+          return;
+        }
+
+
+      }
+      title.val('Welcome, ' + fullName);
+
+    })
+
+  // })
+}
+
 submitBtn.on('click', function () {
-  popup.css('display', 'none');
+  logInPage();
+});
 
-  const client = {};
-
-  client.fullName = fullName.val();
-  client.userName = userName.val();
-  client.email = email.val();
-  client.password = password.val();
-
-  clients.push(client);
-  localStorage.setItem('clients', JSON.stringify(clients));
-  JSON.parse(localStorage.getItem('clients'));
-
-
-  inputBlock[0].remove();
-  inputBlock[1].remove();
-  inputBlock[2].remove();
-  $('.checkbox').remove();
-  $('.input-value').val('');
-  $('#title').val('Log in to the system');
-  account.text('Registration');
-  signUpBtn.text('Sign In');
-  account.attr('disabled', false);
-
-})
-
+// account.on('click', function () {
+// });
 account.on('click', function () {
-  location.reload();
-  inputBlock[0].remove();
-  inputBlock[1].remove();
-  inputBlock[2].remove();
-  $('.checkbox').remove();
+  logIn()
 })
+
+function logIn (){
+
+    logInPage();
+}
+
+function reload (){
+  account.on('click', function () {
+    location.reload();
+  })
+}
+
+
+
+// function logInPage() {
+//   console.log(document.getElementsByClassName('input-block')[4]);
+//
+//   document.getElementById('title').innerText = "Log in to the system";
+//   document.getElementsByClassName('input-block')[4].remove();
+//   document.getElementsByClassName('input-block')[2].remove();
+//   document.getElementsByClassName('input-block')[0].remove();
+//   document.getElementById('sign-up-btn').innerText = "Log In";
+//
+//   document.getElementsByClassName('checkbox')[0].remove();
+//   document.getElementsByClassName('account')[0].remove();
+//   popup.style.display = 'none';
+//   userName.value = "";
+//   password.value = "";
+//
+//   signUpBtn.onclick = function () {
+//     if (!password.value) {
+//       alert("Неверно введен пароль");
+//       return;
+//     }
+//     if (!userName.value) {
+//       alert("Неверно введено имя пользователя");
+//       return;
+//     }
+//     alert(`Добро пожаловать, ${userName.value}!`)
+//   }
+// }

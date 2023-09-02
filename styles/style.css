@@ -151,7 +151,7 @@ body {
   justify-content: center;
   flex-direction: column;
   gap: 20px;
-
+  padding: 20px;
 }
 
 .popup-content {
