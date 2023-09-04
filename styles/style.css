@@ -190,3 +190,7 @@ body {
   background: transparent;
   cursor: pointer;
 }
+
+.error {
+  color: red;
+}
